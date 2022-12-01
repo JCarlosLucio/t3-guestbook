@@ -4,7 +4,7 @@ import { protectedProcedure, publicProcedure, router } from "../trpc";
 export const guestbookRouter = router({
   getAll: publicProcedure.query(async ({ ctx }) => {
     try {
-      await ctx.prisma.guestbook.findMany({
+      return await ctx.prisma.guestbook.findMany({
         select: {
           name: true,
           message: true,
