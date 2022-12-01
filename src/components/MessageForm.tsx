@@ -5,7 +5,34 @@ import { trpc } from "../utils/trpc";
 const MessageForm = () => {
   const { data: session } = useSession();
   const [message, setMessage] = useState("");
-  const postMessage = trpc.guestbook.postMessage.useMutation();
+  const utils = trpc.useContext();
+
+  const postMessage = trpc.guestbook.postMessage.useMutation({
+    onMutate: (newMessage) => {
+      utils.guestbook.getAll.cancel();
+      const previousMessages = utils.guestbook.getAll.getData();
+
+      // Optimistically update to the new value
+      if (previousMessages) {
+        utils.guestbook.getAll.setData(undefined, [
+          newMessage,
+          ...previousMessages,
+        ]);
+      }
+
+      return { previousMessages };
+    },
+    // If the mutation fails, use the context returned from onMutate to roll back
+    onError: (error, newMessage, ctx) => {
+      if (ctx?.previousMessages) {
+        utils.guestbook.getAll.setData(undefined, ctx.previousMessages);
+      }
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      utils.guestbook.getAll.invalidate();
+    },
+  });
 
   return (
     <form
