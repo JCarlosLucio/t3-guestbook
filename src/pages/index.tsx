@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
+import MessageForm from "../components/MessageForm";
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
@@ -24,6 +25,9 @@ const Home: NextPage = () => {
             <>
               <p>Hi {session.user?.name}</p>
               <button onClick={() => signOut()}>Logout</button>
+              <div className="pt-6">
+                <MessageForm />
+              </div>
             </>
           ) : (
             <>
