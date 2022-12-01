@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import MessageForm from "../components/MessageForm";
+import Messages from "../components/Messages";
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
@@ -36,6 +37,9 @@ const Home: NextPage = () => {
               </button>
             </>
           )}
+        </div>
+        <div className="pt-10">
+          <Messages />
         </div>
       </main>
     </>
